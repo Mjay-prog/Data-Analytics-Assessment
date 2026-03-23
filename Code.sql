@@ -50,3 +50,23 @@ select
 from `workspace`.`default`.`bright_coffee_shop_analysis_case_study_1_1`
 group by product_category
 order by total_quantity_sold DESC;
+
+---Analyzes sales trends by aggregating revenue and quantity across product categories, time-of-day intervals, and store locations to identify patterns in customer purchasing behavior.
+select 
+    store_location,
+    product_category,
+    CASE 
+        WHEN EXTRACT(HOUR FROM transaction_time) BETWEEN 6 AND 11 THEN 'Morning'
+        WHEN EXTRACT(HOUR FROM transaction_time) BETWEEN 12 AND 17 THEN 'Afternoon'
+        WHEN EXTRACT(HOUR FROM transaction_time) BETWEEN 18 AND 21 THEN 'Evening'
+        ELSE 'Night'
+    end AS time_of_day,
+    sum(transaction_qty * unit_price) AS total_revenue,
+    sum(transaction_qty) AS total_quantity
+from `workspace`.`default`.`bright_coffee_shop_analysis_case_study_1_1`
+group by store_location,
+        product_category,
+         time_of_day
+order by store_location,
+        total_revenue DESC;
+
